@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const { notFoundError } = require('./errors/errors');
 
 const app = express();
 
@@ -15,5 +16,7 @@ app.use((req, res, next) => {
 });
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
+
+app.use('*', (req, res) => res.status(notFoundError).send({ message: 'Такая страница не существует.' }));
 
 app.listen(3000);
