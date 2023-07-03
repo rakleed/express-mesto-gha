@@ -50,10 +50,14 @@ module.exports.likeCard = (req, res) => {
 
 module.exports.deleteCard = (req, res) => {
   Card.findByIdAndDelete(req.params.cardId)
+    .orFail(new Error(notFoundError))
     .then((card) => res.send(card))
     .catch((err) => {
-      if (err instanceof Error.CastError) {
+      if (err.message === notFoundError) {
         res.status(NOT_FOUND).send({ message: 'Карточка с указанным `_id` не найдена.' });
+        return;
+      } if (err instanceof Error.CastError) {
+        res.status(BAD_REQUEST).send({ message: 'Передан несуществующий `_id` карточки.' });
         return;
       }
       res.status(INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка.' });
