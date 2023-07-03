@@ -1,25 +1,30 @@
 const { Error } = require('mongoose');
 const User = require('../models/user');
-const { BAD_REQUEST, NOT_FOUND, INTERNAL_SERVER_ERROR } = require('../errors/errors');
+const {
+  notFoundError,
+  BAD_REQUEST,
+  NOT_FOUND,
+  INTERNAL_SERVER_ERROR,
+} = require('../errors/errors');
 
 module.exports.getUsers = (req, res) => {
   User.find({})
     .then((users) => res.send(users))
-    .catch((err) => {
-      if (err instanceof Error.ValidationError) {
-        res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные при создании пользователя.' });
-        return;
-      }
-      res.status(INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка.' });
-    });
+    .catch(res.status(INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка.' }));
 };
 
 module.exports.getUserById = (req, res) => {
-  User.findById(req.params['userId'])
+  User.findById(req.params.userId)
+    .orFail(new Error(notFoundError))
     .then((user) => res.send(user))
+    // .catch(console.error)
     .catch((err) => {
-      if (err instanceof Error.CastError) {
+      if (err.message === notFoundError) {
         res.status(NOT_FOUND).send({ message: 'Пользователь по указанному `_id` не найден.' });
+        return;
+      }
+      if (err instanceof Error.CastError) {
+        res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные при поиске пользователя.' });
         return;
       }
       res.status(INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка.' });
