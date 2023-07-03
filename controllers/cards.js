@@ -11,7 +11,7 @@ module.exports.getCards = (req, res) => {
   Card.find({})
     .populate('likes')
     .then((cards) => res.send(cards))
-    .catch(res.status(INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка.' }));
+    .catch(() => res.status(INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка.' }));
 };
 
 module.exports.createCard = (req, res) => {

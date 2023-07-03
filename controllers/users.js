@@ -10,7 +10,7 @@ const {
 module.exports.getUsers = (req, res) => {
   User.find({})
     .then((users) => res.send(users))
-    .catch(res.status(INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка.' }));
+    .catch(() => res.status(INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка.' }));
 };
 
 module.exports.getUserById = (req, res) => {
