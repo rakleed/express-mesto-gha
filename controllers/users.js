@@ -15,7 +15,7 @@ module.exports.getUsers = (req, res) => {
 };
 
 module.exports.getUserById = (req, res) => {
-  User.findById(req.params.userId)
+  User.findById(req.params['userId'])
     .then((user) => res.send(user))
     .catch((err) => {
       if (err instanceof Error.CastError) {
