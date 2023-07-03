@@ -1,11 +1,22 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const rateLimit = require('express-rate-limit');
+const helmet = require('helmet');
 const { NOT_FOUND } = require('./errors/errors');
 
 const app = express();
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+app.use(helmet());
+app.use(limiter);
 app.use(express.json());
 app.use((req, res, next) => {
   req.user = {
