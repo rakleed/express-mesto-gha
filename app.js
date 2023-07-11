@@ -2,11 +2,16 @@ const express = require('express');
 const mongoose = require('mongoose');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
-const { NOT_FOUND } = require('./errors/errors');
+const { errors } = require('celebrate');
+const auth = require('./middlewares/auth');
+const { validateLogin, validateCreateUser } = require('./middlewares/validation');
+const { login, createUser } = require('./controllers/users');
+const NotFound = require('./errors/NotFound');
+const { MONGODB_URL, PORT } = require('./utils/constants');
 
 const app = express();
 
-mongoose.connect('mongodb://localhost:27017/mestodb');
+mongoose.connect(MONGODB_URL);
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -17,17 +22,21 @@ const limiter = rateLimit({
 
 app.use(helmet());
 app.use(limiter);
-app.use(express.json());
-app.use((req, res, next) => {
-  req.user = {
-    _id: '64a082113db0edce5dfcf98e',
-  };
 
-  next();
-});
+app.use(express.json());
+app.post('/signin', validateLogin, login);
+app.post('/signup', validateCreateUser, createUser);
+app.use(auth);
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 
-app.use('*', (req, res) => res.status(NOT_FOUND).send({ message: 'Такая страница не существует.' }));
+app.use('*', (req, res, next) => next(new NotFound('Такая страница не существует.')));
 
-app.listen(3000);
+app.use(errors());
+app.use((err, req, res, next) => {
+  const { statusCode = 500, message = 'На сервере произошла ошибка.' } = err;
+  res.status(statusCode).send({ message });
+  next();
+});
+
+app.listen(PORT);
