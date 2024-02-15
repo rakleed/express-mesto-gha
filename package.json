@@ -12,19 +12,19 @@
   "license": "MIT",
   "keywords": [],
   "devDependencies": {
-    "eslint": "^8.43.0",
+    "eslint": "^8.56.0",
     "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-plugin-import": "^2.27.5",
-    "nodemon": "^3.0.1"
+    "eslint-plugin-import": "^2.29.1",
+    "nodemon": "^3.0.3"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
-    "celebrate": "^15.0.1",
+    "celebrate": "^15.0.3",
     "express": "^4.18.2",
-    "express-rate-limit": "^6.7.1",
-    "helmet": "^7.0.0",
-    "jsonwebtoken": "^9.0.1",
-    "mongoose": "^7.5.2",
-    "validator": "^13.9.0"
+    "express-rate-limit": "^7.1.5",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^7.6.8",
+    "validator": "^13.11.0"
   }
 }
